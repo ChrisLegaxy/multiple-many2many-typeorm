@@ -1,12 +1,14 @@
 import { MovieRepository } from "../repositories/MovieRepository";
-import { getRepository } from "typeorm";
+import { getRepository, getConnection, getCustomRepository } from "typeorm";
 
 export class MovieService {
-  constructor(private movieRepository = getRepository(MovieRepository)) {}
+  constructor(public movieRepository = getCustomRepository(MovieRepository)) {}
 
-  public findOne() {}
+  public async find() {
+    return await this.movieRepository.find();
+  }
 
   public findMany() {}
-
   // add more methods here
 }
+  

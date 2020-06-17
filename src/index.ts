@@ -7,7 +7,7 @@ import { Application } from "express";
 createConnection().then(async () => {
   const app: Application = await createExpressServer({
     routePrefix: "/api",
-    controllers: [path.join(__dirname + "../controllers/**/*.ts")],
+    controllers: [path.join(__dirname + "/controllers/**/*.ts")],
   });
 
   app.listen(5000, () => {
