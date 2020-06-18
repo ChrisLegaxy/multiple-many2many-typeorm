@@ -31,6 +31,6 @@ export class MovieCrewRole {
   @ManyToOne((type) => Crew, (crew) => crew.movieCrewRoles)
   crew: Crew;
 
-  @ManyToOne((type) => Role, (role) => role.movieCrewRoles)
+  @ManyToOne((type) => Role, (role) => role.movieCrewRoles, {eager:true})
   role: Role;
 }

@@ -18,6 +18,6 @@ export class Movie {
   @Column()
   title: string;
 
-  @OneToMany((type) => MovieCrewRole, (movieCrewRole) => movieCrewRole.movie)
+  @OneToMany((type) => MovieCrewRole, (movieCrewRole) => movieCrewRole.movie, {eager:true})
   movieCrewRoles: MovieCrewRole[];
 }
