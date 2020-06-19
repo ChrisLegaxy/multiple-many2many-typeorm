@@ -4,6 +4,7 @@ import { MovieCrewRole } from "../entity/MovieCrewRole";
 import { Crew } from "../entity/Crew";
 import { CrewRepository } from "../repositories/CrewRepository";
 import e from "express";
+import { Movie } from "../entity/Movie";
 
 export class MovieService {
   constructor(
@@ -18,9 +19,8 @@ export class MovieService {
   public async groupCrew(movieCrewRole){
     const res = []
     const crewIds = Array.from(new Set(movieCrewRole.map(e => e.crewId)))
-    const crews =  await this.crewRepository.createQueryBuilder("crew")
-    .where("crew.id IN (:...ids)", {ids: crewIds})
-    .getMany()
+    const crews =  await this.crewRepository.findByIds(crewIds)
+   
     for( let crew of crews){
       const temp = {}
       temp['name'] = crew.name
@@ -32,12 +32,21 @@ export class MovieService {
     return res
   }
 
+  private async formMovieData(movie: Movie){
+    return {
+      'title': movie.title,
+      'crews': await this.groupCrew(movie.movieCrewRoles)
+    }
+  }
+
   public async getMovieById(movieId: number){
-    const res = {}
-    const movie = await this.movieRepository.findOne({where: {id: movieId}})
-    res['title'] = movie.title
-    res['crews'] = await this.groupCrew(movie.movieCrewRoles)
-    return res
+    const movie = await this.movieRepository.findOne(movieId)
+    return this.formMovieData(movie)
+  }
+
+  public async getAllMovies(){
+    const movies = await this.movieRepository.find()
+    return Promise.all(movies.map(async movie => this.formMovieData(movie)))
   }
 
   public findMany() {}
