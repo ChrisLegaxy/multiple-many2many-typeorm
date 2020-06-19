@@ -1,4 +1,4 @@
-import { JsonController, Get, Res, Post, Param } from "routing-controllers";
+import { JsonController, Get, Res, Post, Param, Body } from "routing-controllers";
 import { Response } from "express";
 import { MovieService } from "../services/MovieService";
 import { getRepository } from "typeorm";
@@ -13,15 +13,17 @@ export class MovieController {
   // it should work here (I haven't implemented dependency injection so you have to instatiate)
 
   @Get()
-  public async getMovies(@Res() response: Response){
+  private async getMovies(@Res() response: Response){
     return response.json(await this.movieService.getAllMovies());
   }
 
   @Get('/:id')
-  public async getAllMovieById(@Res() response: Response, @Param("id") movieId: number) {
+  private async getAllMovieById(@Res() response: Response, @Param("id") movieId: number) {
     return response.json(await this.movieService.getMovieById(movieId));
   }
 
   @Post()
-  public async createMovie(@Res() response: Response) {}
+  private async createMovie(@Res() response: Response, @Body() data) {
+    return response.json(await this.movieService.createMovie(data))
+  }
 }

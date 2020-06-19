@@ -5,13 +5,14 @@ import {
   ManyToMany,
   JoinTable,
   OneToMany,
+  BaseEntity,
 } from "typeorm";
 import { Crew } from "./Crew";
 import { Role } from "./Role";
 import { MovieCrewRole } from "./MovieCrewRole";
 
 @Entity()
-export class Movie {
+export class Movie extends BaseEntity {
   @PrimaryGeneratedColumn()
   id: number;
 

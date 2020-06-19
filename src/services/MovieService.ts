@@ -1,10 +1,8 @@
 import { MovieRepository } from "../repositories/MovieRepository";
-import { getRepository, getConnection, getCustomRepository } from "typeorm";
-import { MovieCrewRole } from "../entity/MovieCrewRole";
-import { Crew } from "../entity/Crew";
+import { getCustomRepository, getManager } from "typeorm";
 import { CrewRepository } from "../repositories/CrewRepository";
-import e from "express";
 import { Movie } from "../entity/Movie";
+import { MovieCrewRole } from "../entity/MovieCrewRole";
 
 export class MovieService {
   constructor(
@@ -47,6 +45,32 @@ export class MovieService {
   public async getAllMovies(){
     const movies = await this.movieRepository.find()
     return Promise.all(movies.map(async movie => this.formMovieData(movie)))
+  }
+
+  public async createMovie(data){
+    const movie = new Movie()
+    movie.title = data.title
+    await movie.save()
+
+    const dataInsert = []
+
+    data.crews.forEach(crew => {
+      crew.roles.forEach(role => {
+        dataInsert.push({
+          'crewId': crew.id,
+          'roleId': role.role,
+          'movieId': movie.id
+        })
+      });
+    });
+
+    await this.movieRepository
+      .createQueryBuilder()
+      .insert()
+      .into(MovieCrewRole)
+      .values(dataInsert)
+      .execute()
+    return await this.getMovieById(movie.id)
   }
 
   public findMany() {}
